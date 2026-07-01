@@ -6,6 +6,10 @@ class Tuneli < Formula
   license "MIT"
 
   def install
+    odie "DEBUG: cwd=#{Dir.pwd}, buildpath=#{buildpath}, prefix=#{prefix}"
+    odie "DEBUG: buildpath contents=#{Dir.children(buildpath).inspect}"
+    odie "DEBUG: Dir['tuneli.app']=#{Dir['tuneli.app'].inspect}"
+    odie "DEBUG: Dir['*']=#{Dir['*'].inspect}"
     # The tarball extracts with tuneli.app/ as the single root directory.
     # homebrew's install runs with cwd=buildpath which contains the
     # extracted tuneli.app/ — install it into prefix/ as-is.
