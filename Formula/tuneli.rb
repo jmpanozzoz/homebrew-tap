@@ -6,7 +6,24 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    prefix.install "tuneli.app"
+    # The tarball extracts to ./tuneli.app/, but homebrew runs install from
+    # a buildpath that may not match — use buildpath so we anchor on the
+    # staging dir regardless of cwd.
+    app_path = buildpath/"tuneli.app"
+    odie "tuneli.app not found in buildpath (#{app_path})" unless app_path.exist?
+    prefix.install app_path
+  end
+
+  def post_install
+    # Brew installs to /opt/homebrew/Cellar/tuneli/1.1.1 by default. Symlink
+    # the bundle into ~/Applications so LaunchServices registers it and
+    # the user can launch from Finder/Spotlight.
+    target = Pathname.new(File.expand_path("~/Applications/tuneli.app"))
+    source = prefix/"tuneli.app"
+    FileUtils.rm_rf(target)
+    FileUtils.ln_s(source, target)
+    # Trigger LaunchServices registration.
+    system_command "/usr/bin/open", args: [source]
   end
 
   def caveats
