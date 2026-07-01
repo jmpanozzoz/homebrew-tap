@@ -6,8 +6,7 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    ohai "DEBUG: buildpath tree:"
-    system "find", buildpath.to_s, "-maxdepth", "3"
+    ohai "DEBUG-TREE:\n#{`find #{buildpath} -maxdepth 3`}"
     odie "DEBUG-DONE"
   end
 
