@@ -6,9 +6,8 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    ohai "DEBUG-A: cwd=#{Dir.pwd}, buildpath=#{buildpath}, prefix=#{prefix}"
-    ohai "DEBUG-B: buildpath children=#{Dir.children(buildpath).inspect}"
-    ohai "DEBUG-C: Dir[*]=#{Dir['*'].inspect}"
+    ohai "DEBUG: buildpath tree:"
+    system "find", buildpath.to_s, "-maxdepth", "3"
     odie "DEBUG-DONE"
   end
 
