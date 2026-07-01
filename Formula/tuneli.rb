@@ -18,15 +18,15 @@ class Tuneli < Formula
   end
 
   def post_install
-    # Brew installs to /opt/homebrew/Cellar/tuneli/1.1.1 by default. Symlink
-    # the bundle into ~/Applications so LaunchServices registers it and
-    # the user can launch from Finder/Spotlight.
+    # Brew installs to /opt/homebrew/Cellar/tuneli/<version>/ by default.
+    # Symlink the bundle into ~/Applications so LaunchServices registers
+    # it and the user can launch from Finder/Spotlight.
     target = Pathname.new(File.expand_path("~/Applications/tuneli.app"))
     source = prefix/"tuneli.app"
+    odie "tuneli.app missing at #{source}" unless source.exist?
     FileUtils.rm_rf(target)
     FileUtils.ln_s(source, target)
-    # Trigger LaunchServices registration.
-    system_command "/usr/bin/open", args: [source]
+    ohai "Linked #{target} -> #{source}"
   end
 
   def caveats
