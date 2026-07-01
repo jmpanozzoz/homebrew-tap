@@ -6,13 +6,16 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    ohai "DEBUG-1: cwd=#{Dir.pwd}"
-    ohai "DEBUG-2: buildpath=#{buildpath}"
-    ohai "DEBUG-3: buildpath children=#{Dir.children(buildpath).inspect}"
-    ohai "DEBUG-4: Dir['tuneli.app']=#{Dir['tuneli.app'].inspect}"
-    ohai "DEBUG-5: Dir['*']=#{Dir['*'].inspect}"
-    ohai "DEBUG-6: Dir['tuneli.app/*']=#{Dir['tuneli.app/*'].inspect}"
-    odie "DEBUG-DONE"
+    # Homebrew's "tarball with single root dir" handling moves the
+    # extracted tuneli.app/ directory INTO a buildpath that is itself
+    # named tuneli.app. So cwd when install runs is buildpath, and its
+    # direct children are Contents/, MacOS/, Resources/ (the bundle
+    # internals). We need to create prefix/tuneli.app/ and install all
+    # top-level entries of cwd into it.
+    odie "Expected tuneli.app internals (Contents/, MacOS/) in buildpath" \
+      unless (buildpath/"Contents").exist? && (buildpath/"MacOS").exist?
+    prefix.mkdir
+    (prefix/"tuneli.app").install Dir["*"]
   end
 
   def post_install
