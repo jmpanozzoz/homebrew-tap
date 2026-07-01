@@ -6,14 +6,13 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    odie "DEBUG: cwd=#{Dir.pwd}, buildpath=#{buildpath}, prefix=#{prefix}"
-    odie "DEBUG: buildpath contents=#{Dir.children(buildpath).inspect}"
-    odie "DEBUG: Dir['tuneli.app']=#{Dir['tuneli.app'].inspect}"
-    odie "DEBUG: Dir['*']=#{Dir['*'].inspect}"
-    # The tarball extracts with tuneli.app/ as the single root directory.
-    # homebrew's install runs with cwd=buildpath which contains the
-    # extracted tuneli.app/ — install it into prefix/ as-is.
-    (prefix/"tuneli.app").install Dir["tuneli.app/*"]
+    ohai "DEBUG-1: cwd=#{Dir.pwd}"
+    ohai "DEBUG-2: buildpath=#{buildpath}"
+    ohai "DEBUG-3: buildpath children=#{Dir.children(buildpath).inspect}"
+    ohai "DEBUG-4: Dir['tuneli.app']=#{Dir['tuneli.app'].inspect}"
+    ohai "DEBUG-5: Dir['*']=#{Dir['*'].inspect}"
+    ohai "DEBUG-6: Dir['tuneli.app/*']=#{Dir['tuneli.app/*'].inspect}"
+    odie "DEBUG-DONE"
   end
 
   def post_install
