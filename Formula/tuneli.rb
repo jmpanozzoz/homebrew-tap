@@ -21,12 +21,21 @@ class Tuneli < Formula
     # Brew installs to /opt/homebrew/Cellar/tuneli/<version>/ by default.
     # Symlink the bundle into ~/Applications so LaunchServices registers
     # it and the user can launch from Finder/Spotlight.
+    STDERR.puts "[tuneli post_install] starting, prefix=#{prefix}"
+    STDERR.flush
     target = Pathname.new(File.expand_path("~/Applications/tuneli.app"))
     source = prefix/"tuneli.app"
+    STDERR.puts "[tuneli post_install] source.exists?=#{source.exist?}, target=#{target}"
+    STDERR.flush
     odie "tuneli.app missing at #{source}" unless source.exist?
     FileUtils.rm_rf(target)
     FileUtils.ln_s(source, target)
     ohai "Linked #{target} -> #{source}"
+  rescue => e
+    STDERR.puts "[tuneli post_install] ERROR: #{e.class}: #{e.message}"
+    STDERR.puts e.backtrace.first(20).join("\n")
+    STDERR.flush
+    raise
   end
 
   def caveats
