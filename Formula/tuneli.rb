@@ -6,8 +6,15 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    ohai "DEBUG-TREE:\n#{`find #{buildpath} -maxdepth 3`}"
-    odie "DEBUG-DONE"
+    # Homebrew's tarball-with-single-root-dir handling strips out the
+    # Contents/, MacOS/, Resources/, Info.plist from buildpath, leaving
+    # just the empty tuneli.app/ wrapper. To work around that, extract
+    # the tarball ourselves into the keg.
+    tarball_dir = cached_download
+    odie "Tarball not found at #{tarball_dir}" unless tarball_dir.exist?
+    system "tar", "-xzf", tarball_dir.to_s, "-C", buildpath.to_s
+    # buildpath/tuneli.app/ should now contain Contents/, MacOS/, etc.
+    (prefix/"tuneli.app").install Dir.children(buildpath/"tuneli.app")
   end
 
   def post_install
