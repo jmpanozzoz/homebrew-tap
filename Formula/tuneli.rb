@@ -6,14 +6,10 @@ class Tuneli < Formula
   license "MIT"
 
   def install
-    # The tarball extracts so that buildpath itself is the .app bundle
-    # (i.e. /private/tmp/tuneli-XXXXX/tuneli.app/...). Install the
-    # contents of buildpath into prefix/.
-    prefix.install Dir["*"]
-    # Then move the bundle into a predictable location so post_install
-    # and the symlink can find it.
-    app_dir = prefix/"tuneli.app"
-    odie "tuneli.app not installed into prefix" unless app_dir.exist?
+    # The tarball extracts with tuneli.app/ as the single root directory.
+    # homebrew's install runs with cwd=buildpath which contains the
+    # extracted tuneli.app/ — install it into prefix/ as-is.
+    (prefix/"tuneli.app").install Dir["tuneli.app/*"]
   end
 
   def post_install
