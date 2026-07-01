@@ -18,24 +18,14 @@ class Tuneli < Formula
   end
 
   def post_install
-    # Brew installs to /opt/homebrew/Cellar/tuneli/<version>/ by default.
-    # Symlink the bundle into ~/Applications so LaunchServices registers
-    # it and the user can launch from Finder/Spotlight.
-    STDERR.puts "[tuneli post_install] starting, prefix=#{prefix}"
-    STDERR.flush
-    target = Pathname.new(File.expand_path("~/Applications/tuneli.app"))
-    source = prefix/"tuneli.app"
-    STDERR.puts "[tuneli post_install] source.exists?=#{source.exist?}, target=#{target}"
-    STDERR.flush
-    odie "tuneli.app missing at #{source}" unless source.exist?
-    FileUtils.rm_rf(target)
-    FileUtils.ln_s(source, target)
-    ohai "Linked #{target} -> #{source}"
-  rescue => e
-    STDERR.puts "[tuneli post_install] ERROR: #{e.class}: #{e.message}"
-    STDERR.puts e.backtrace.first(20).join("\n")
-    STDERR.flush
-    raise
+    # We intentionally do NOT symlink into ~/Applications here: brew's
+    # post_install runs in a sandbox where ~ is a tmpdir, not the real
+    # home, so any symlink into a real-user path would fail with ENOENT.
+    # The user runs the one-line command from `caveats` to do the
+    # symlink themselves; this is the standard pattern for macOS .app
+    # bundles installed via brew formulae.
+    ohai "tuneli installed to #{prefix}/tuneli.app"
+    ohai "Run the command from the caveats block to symlink it into ~/Applications"
   end
 
   def caveats
@@ -47,7 +37,7 @@ class Tuneli < Formula
 
         ln -sf #{prefix}/tuneli.app ~/Applications/tuneli.app
 
-      Or just open it once to register it with LaunchServices:
+      Or just open it directly:
 
         open #{prefix}/tuneli.app
 
